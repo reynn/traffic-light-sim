@@ -36,6 +36,7 @@ type (
 	}
 )
 
+// NewLightController creates a new traffic light controller with the given durations
 func NewLightController(red time.Duration, yellow time.Duration, green time.Duration) *LightController {
 	return &LightController{
 		RedLight:    red,
@@ -44,6 +45,7 @@ func NewLightController(red time.Duration, yellow time.Duration, green time.Dura
 	}
 }
 
+// Start Run the traffic light simulation
 func (c *LightController) Start(ctx context.Context) error {
 	ticker := time.NewTicker(c.RedLight)
 	currLight := LightRed
@@ -53,22 +55,24 @@ func (c *LightController) Start(ctx context.Context) error {
 		case <-ctx.Done():
 			return ctx.Err()
 		case <-ticker.C:
-			switch currLight {
-			case LightRed:
-				currLight = LightYellow
-				ticker = time.NewTicker(c.YellowLight)
-				displayTrafficLight(currLight)
-			case LightYellow:
-				currLight = LightGreen
-				ticker = time.NewTicker(c.GreenLight)
-				displayTrafficLight(currLight)
-			case LightGreen:
-				currLight = LightRed
-				ticker = time.NewTicker(c.RedLight)
-				displayTrafficLight(currLight)
-			}
+			var duration time.Duration
+			currLight, duration = c.switchLight(currLight)
+			ticker = time.NewTicker(duration)
+			displayTrafficLight(currLight)
 		}
 	}
+}
+
+func (c *LightController) switchLight(currLight Light) (Light, time.Duration) {
+	switch currLight {
+	case LightRed:
+		return LightYellow, c.YellowLight
+	case LightYellow:
+		return LightGreen, c.GreenLight
+	case LightGreen:
+		return LightRed, c.RedLight
+	}
+	return LightRed, c.RedLight
 }
 
 func displayTrafficLight(l Light) {

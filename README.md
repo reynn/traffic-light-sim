@@ -12,10 +12,8 @@ $ make build
 
 ## Running
 
-To run the default settings you can use simply `make run`, to control the timing of lights use the following:
+To run the default settings you can use simply `make run`. To control the timing of lights use the following after building:
 
 ```shell
 $ ./traffic-lights -red 8s -yellow 5s -green 10s
 ```
-
-

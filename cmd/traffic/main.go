@@ -33,6 +33,7 @@ func main() {
 			fmt.Printf("Error with light controller: %v\n", e)
 		}
 	}()
+	// TODO: Add keyboard control for changing traffic light durations during operation
 	go func() {
 		defer wg.Done()
 		keysEvents, err := keyboard.GetKeys(10)
